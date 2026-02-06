@@ -30,13 +30,13 @@ public class ProductController {
 
     @GetMapping("/list")
     public String productListPage(Model model) {
-        model.addAttribute("products", service.findAll());
+        List<Product> products = service.findAll();
+        model.addAttribute("products", products);
         return "productList";
     }
 
-    // ===== EDIT PRODUCT =====
     @GetMapping("/edit/{id}")
-    public String editProductForm(@PathVariable Long id, Model model) {
+    public String editProductForm(@PathVariable String id, Model model) {
         Product product = service.findById(id);
         model.addAttribute("product", product);
         return "editProduct";
@@ -49,9 +49,8 @@ public class ProductController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteProduct(@PathVariable Long id) {
+    public String deleteProduct(@PathVariable String id) {
         service.deleteById(id);
         return "redirect:/product/list";
     }
-
 }

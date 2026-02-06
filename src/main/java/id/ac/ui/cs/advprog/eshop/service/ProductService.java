@@ -9,11 +9,9 @@ public interface ProductService {
 
     List<Product> findAll();
 
-    Product findById(Long id);
+    Product findById(String id);
 
     void update(Product product);
 
-    void deleteById(Long id);
+    void deleteById(String id);
 }
-
-
