@@ -102,7 +102,7 @@ class CreateProductFunctionalTest {
         for (String url : urls) {
             try {
                 driver.get(url);
-              
+
                 if (!pageLooksLike404(driver)) return;
             } catch (RuntimeException e) {
                 lastError = e;
