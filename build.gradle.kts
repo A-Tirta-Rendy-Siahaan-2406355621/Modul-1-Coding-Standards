@@ -45,6 +45,13 @@ tasks.withType<Pmd>().configureEach {
     }
 }
 
+pmd {
+    toolVersion = "7.0.0-rc4"
+    isConsoleOutput = true
+    rulesMinimumPriority = 5
+    ruleSetFiles = files("config/pmd/ruleset.xml")
+    ruleSets = emptyList()
+}
 
 repositories {
     mavenCentral()
