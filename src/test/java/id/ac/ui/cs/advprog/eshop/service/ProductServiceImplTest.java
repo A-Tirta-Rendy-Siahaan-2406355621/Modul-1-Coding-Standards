@@ -88,4 +88,30 @@ class ProductServiceImplTest {
         assertEquals(5, stillThere.getProductQuantity());
         assertEquals(1, productService.findAll().size());
     }
+
+    @Test
+    void testUpdateProduct_negative_updatedProductNull_shouldDoNothing() {
+
+        productService.update(null);
+        assertTrue(productService.findAll().isEmpty());
+    }
+
+    @Test
+    void testUpdateProduct_negative_productIdNull_shouldDoNothing() {
+        Product updated = new Product();
+        updated.setProductId(null);
+        updated.setProductName("X");
+        updated.setProductQuantity(1);
+
+        productService.update(updated);
+
+        assertTrue(productService.findAll().isEmpty());
+    }
+
+    @Test
+    void testDeleteProduct_negative_idNull_shouldDoNothing() {
+
+        productService.deleteById(null);
+        assertTrue(productService.findAll().isEmpty());
+    }
 }

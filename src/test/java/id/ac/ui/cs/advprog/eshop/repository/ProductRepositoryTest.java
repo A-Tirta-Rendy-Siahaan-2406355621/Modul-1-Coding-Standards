@@ -85,6 +85,19 @@ class ProductRepositoryTest {
     }
 
     @Test
+    void testCreateGeneratesIdWhenIdEmpty() {
+        Product product = new Product();
+        product.setProductId("");
+        product.setProductName("Produk ID Kosong");
+        product.setProductQuantity(1);
+
+        Product created = productRepository.create(product);
+
+        assertNotNull(created.getProductId());
+        assertFalse(created.getProductId().isEmpty());
+    }
+
+    @Test
     void testFindByIdFoundAndNotFound() {
         Product product = new Product();
         product.setProductId("id-1");
