@@ -1,7 +1,7 @@
 package id.ac.ui.cs.advprog.eshop.service;
 
 import id.ac.ui.cs.advprog.eshop.model.Product;
-import id.ac.ui.cs.advprog.eshop.repository.ProductRepository;
+import id.ac.ui.cs.advprog.eshop.repository.ProductRepositoryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,12 +15,11 @@ class ProductServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        productService = new ProductServiceImpl(new ProductRepository());
+        productService = new ProductServiceImpl(new ProductRepositoryImpl());
     }
 
     @Test
     void testUpdateProduct_positive_idExists_shouldUpdateNameAndQuantity() {
-
         Product p = new Product();
         p.setProductId("p1");
         p.setProductName("Old Name");
@@ -32,10 +31,9 @@ class ProductServiceImplTest {
         updated.setProductName("New Name");
         updated.setProductQuantity(99);
 
-        productService.update(updated);
+        assertTrue(productService.update(updated));
 
         Product result = productService.findById("p1");
-
         assertNotNull(result);
         assertEquals("New Name", result.getProductName());
         assertEquals(99, result.getProductQuantity());
@@ -43,13 +41,12 @@ class ProductServiceImplTest {
 
     @Test
     void testUpdateProduct_negative_idNotExists_shouldNotCreateNewProduct() {
-
         Product updated = new Product();
         updated.setProductId("does-not-exist");
         updated.setProductName("X");
         updated.setProductQuantity(1);
 
-        productService.update(updated);
+        assertFalse(productService.update(updated));
 
         List<Product> all = productService.findAll();
         assertTrue(all.isEmpty());
@@ -57,14 +54,13 @@ class ProductServiceImplTest {
 
     @Test
     void testDeleteProduct_positive_idExists_shouldRemoveProduct() {
-
         Product p = new Product();
         p.setProductId("p1");
         p.setProductName("To Delete");
         p.setProductQuantity(1);
         productService.create(p);
 
-        productService.deleteById("p1");
+        assertTrue(productService.delete("p1"));
 
         assertNull(productService.findById("p1"));
         assertTrue(productService.findAll().isEmpty());
@@ -72,17 +68,15 @@ class ProductServiceImplTest {
 
     @Test
     void testDeleteProduct_negative_idNotExists_shouldNotAffectExistingProducts() {
-
         Product p = new Product();
         p.setProductId("p1");
         p.setProductName("Keep Me");
         p.setProductQuantity(5);
         productService.create(p);
 
-        productService.deleteById("does-not-exist");
+        assertFalse(productService.delete("does-not-exist"));
 
         Product stillThere = productService.findById("p1");
-
         assertNotNull(stillThere);
         assertEquals("Keep Me", stillThere.getProductName());
         assertEquals(5, stillThere.getProductQuantity());
@@ -91,8 +85,7 @@ class ProductServiceImplTest {
 
     @Test
     void testUpdateProduct_negative_updatedProductNull_shouldDoNothing() {
-
-        productService.update(null);
+        assertFalse(productService.update(null));
         assertTrue(productService.findAll().isEmpty());
     }
 
@@ -103,15 +96,13 @@ class ProductServiceImplTest {
         updated.setProductName("X");
         updated.setProductQuantity(1);
 
-        productService.update(updated);
-
+        assertFalse(productService.update(updated));
         assertTrue(productService.findAll().isEmpty());
     }
 
     @Test
     void testDeleteProduct_negative_idNull_shouldDoNothing() {
-
-        productService.deleteById(null);
+        assertFalse(productService.delete(null));
         assertTrue(productService.findAll().isEmpty());
     }
 }

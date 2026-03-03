@@ -39,5 +39,55 @@ Untuk Continuous Deployment (CD), implementasi saya sudah mengarah ke CD karena 
 
 Link Koyeb : https://aesthetic-jada-a-2406355621-tirtarendysiahaan-46703dbc.koyeb.app/
 
+REFLEKSI 4:
+Penerapan Prinsip SOLID pada Project
+
+1. Prinsip yang Diterapkan
+
+Pada project ini saya menerapkan beberapa prinsip SOLID, yaitu:
+
+- **Single Responsibility Principle (SRP)**  
+  Setiap class memiliki satu tanggung jawab. Contohnya:
+    - `ProductController` hanya menangani request HTTP.
+    - `ProductService` menangani logic bisnis.
+    - `ProductRepository` menangani akses data.
+
+- **Open/Closed Principle (OCP)**  
+  Class dapat dikembangkan tanpa mengubah kode yang sudah ada. Contohnya penggunaan interface `ProductService` dan `ProductRepository`, sehingga implementasi bisa diganti tanpa mengubah controller.
+
+- **Liskov Substitution Principle (LSP)**  
+  Implementasi seperti `ProductServiceImpl` dapat digunakan sebagai pengganti `ProductService` tanpa merusak fungsionalitas sistem.
+
+- **Interface Segregation Principle (ISP)**  
+  Penggunaan interface `CRUD<T, ID>` membuat service hanya mengimplementasikan method yang memang dibutuhkan.
+
+- **Dependency Inversion Principle (DIP)**  
+  Controller dan Service bergantung pada interface (`ProductService`, `CarService`) bukan pada class konkret (`ProductServiceImpl`).
+
+
+
+2. Keuntungan Menerapkan SOLID
+
+- **Kode lebih terstruktur dan mudah dipahami** karena tiap class punya tanggung jawab jelas.
+- **Mudah dikembangkan** tanpa mengubah banyak file. Misalnya, jika ingin mengganti cara penyimpanan data (misalnya ke database), cukup mengganti implementasi repository.
+- **Mudah diuji (unit testing)** karena dependency menggunakan interface.
+- **Mengurangi coupling** antar class sehingga perubahan di satu bagian tidak merusak bagian lain.
+
+Contoh: Mengganti `ProductRepositoryImpl` dengan implementasi berbasis database tidak perlu mengubah `ProductController`.
+
+
+3. Kerugian Jika Tidak Menerapkan SOLID
+
+- Kode menjadi sulit dipahami karena satu class menangani banyak tanggung jawab.
+- Perubahan kecil bisa berdampak besar ke banyak bagian sistem.
+- Sulit melakukan testing karena dependency langsung ke class konkret.
+- Sistem menjadi kaku dan sulit dikembangkan.
+
+Contoh: Jika controller langsung mengakses data tanpa service dan repository terpisah, maka setiap perubahan logic bisnis akan memaksa perubahan pada controller.
+
+
+
+Dengan menerapkan prinsip SOLID, project menjadi lebih modular, fleksibel, dan mudah untuk dikembangkan di masa depan.
+
 
 
