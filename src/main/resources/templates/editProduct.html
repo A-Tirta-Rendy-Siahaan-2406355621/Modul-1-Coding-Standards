@@ -13,19 +13,16 @@
 
   <form th:action="@{/product/update}" th:object="${product}" method="post">
 
-    <!-- hidden id -->
     <input type="hidden" th:field="*{productId}"/>
 
     <div class="form-group">
       <label>Product Name</label>
-      <input type="text" th:field="*{productName}"
-             class="form-control col-4" required>
+      <input type="text" th:field="*{productName}" class="form-control col-4" required>
     </div>
 
     <div class="form-group">
       <label>Quantity</label>
-      <input type="number" th:field="*{productQuantity}"
-             class="form-control col-4" required>
+      <input type="number" th:field="*{productQuantity}" class="form-control col-4" required>
     </div>
 
     <button type="submit" class="btn btn-success">Update</button>

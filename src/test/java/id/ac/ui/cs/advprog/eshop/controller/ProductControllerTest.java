@@ -85,6 +85,6 @@ class ProductControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(PRODUCT_LIST_URL));
 
-        verify(service).deleteById("1");
+        verify(service).delete("1");
     }
 }

@@ -2,6 +2,7 @@ package id.ac.ui.cs.advprog.eshop.service;
 
 import id.ac.ui.cs.advprog.eshop.model.Product;
 import id.ac.ui.cs.advprog.eshop.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,21 +15,28 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
 
 
+    @Autowired
     public ProductServiceImpl(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 
     @Override
     public Product create(Product product) {
+        if (product == null) return null;
         return productRepository.create(product);
     }
 
     @Override
     public List<Product> findAll() {
-        Iterator<Product> iterator = productRepository.findAll();
-        List<Product> products = new ArrayList<>();
-        iterator.forEachRemaining(products::add);
-        return products;
+        Iterator<Product> productIterator = productRepository.findAll();
+        List<Product> allProduct = new ArrayList<>();
+        productIterator.forEachRemaining(allProduct::add);
+        return allProduct;
+    }
+
+    @Override
+    public boolean delete(String id) {
+        return productRepository.delete(id);
     }
 
     @Override
@@ -37,22 +45,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void update(Product updatedProduct) {
-        if (updatedProduct == null || updatedProduct.getProductId() == null) {
-            return;
-        }
-
-        Product existingProduct = productRepository.findById(updatedProduct.getProductId());
-        if (existingProduct != null) {
-            existingProduct.setProductName(updatedProduct.getProductName());
-            existingProduct.setProductQuantity(updatedProduct.getProductQuantity());
-        }
-    }
-
-    @Override
-    public void deleteById(String id) {
-        if (id != null) {
-            productRepository.deleteById(id);
-        }
+    public boolean update(Product product) {
+        return productRepository.update(product);
     }
 }
