@@ -1,5 +1,7 @@
 package id.ac.ui.cs.advprog.eshop.service;
 
+import id.ac.ui.cs.advprog.eshop.enums.PaymentMethod;
+import id.ac.ui.cs.advprog.eshop.enums.PaymentStatus;
 import id.ac.ui.cs.advprog.eshop.model.Order;
 import id.ac.ui.cs.advprog.eshop.model.Payment;
 import id.ac.ui.cs.advprog.eshop.repository.PaymentRepository;
@@ -12,16 +14,10 @@ import java.util.UUID;
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
-    private static final String SUCCESS = "SUCCESS";
-    private static final String REJECTED = "REJECTED";
-    private static final String FAILED = "FAILED";
-
-    private static final String METHOD_VOUCHER = "VOUCHER";
-    private static final String METHOD_COD = "COD";
-
     private static final String KEY_VOUCHER_CODE = "voucherCode";
     private static final String KEY_ADDRESS = "address";
     private static final String KEY_DELIVERY_FEE = "deliveryFee";
+
     private static final int VOUCHER_LENGTH = 16;
     private static final int VOUCHER_DIGIT_COUNT = 8;
 
@@ -43,54 +39,66 @@ public class PaymentServiceImpl implements PaymentService {
 
         validatePayment(payment);
 
-        paymentRepository.save(payment);
-
-        return payment;
+        return paymentRepository.save(payment);
     }
 
     private void validatePayment(Payment payment) {
 
-        if (METHOD_VOUCHER.equals(payment.getMethod())) {
+        if (PaymentMethod.VOUCHER.getValue().equals(payment.getMethod())) {
+            validateVoucherPayment(payment);
+        }
 
-            String code = payment.getPaymentData().get(KEY_VOUCHER_CODE);
+        if (PaymentMethod.CASH_ON_DELIVERY.getValue().equals(payment.getMethod())) {
+            validateCODPayment(payment);
+        }
+    }
 
-            if (code != null && code.length() == VOUCHER_LENGTH && code.startsWith("ESHOP")) {
+    private void validateVoucherPayment(Payment payment) {
 
-                int digitCount = 0;
+        String code = payment.getPaymentData().get(KEY_VOUCHER_CODE);
 
-                for (char c : code.toCharArray()) {
-                    if (Character.isDigit(c)) {
-                        digitCount++;
-                    }
-                }
+        if (code != null && code.length() == VOUCHER_LENGTH && code.startsWith("ESHOP")) {
 
-                if (digitCount == VOUCHER_DIGIT_COUNT) {
-                    payment.setStatus(SUCCESS);
-                    payment.getOrder().setStatus(SUCCESS);
-                    return;
+            int digitCount = 0;
+
+            for (char c : code.toCharArray()) {
+                if (Character.isDigit(c)) {
+                    digitCount++;
                 }
             }
 
-            payment.setStatus(REJECTED);
-            payment.getOrder().setStatus(FAILED);
-        }
-
-        if (METHOD_COD.equals(payment.getMethod())) {
-
-            String address = payment.getPaymentData().get(KEY_ADDRESS);
-            String deliveryFee = payment.getPaymentData().get(KEY_DELIVERY_FEE);
-
-            boolean invalidAddress = address == null || address.isEmpty();
-            boolean invalidFee = deliveryFee == null || deliveryFee.isEmpty();
-
-            if (invalidAddress || invalidFee) {
-                payment.setStatus(REJECTED);
-                payment.getOrder().setStatus(FAILED);
-            } else {
-                payment.setStatus(SUCCESS);
-                payment.getOrder().setStatus(SUCCESS);
+            if (digitCount == VOUCHER_DIGIT_COUNT) {
+                setSuccess(payment);
+                return;
             }
         }
+
+        setRejected(payment);
+    }
+
+    private void validateCODPayment(Payment payment) {
+
+        String address = payment.getPaymentData().get(KEY_ADDRESS);
+        String deliveryFee = payment.getPaymentData().get(KEY_DELIVERY_FEE);
+
+        boolean invalidAddress = address == null || address.isEmpty();
+        boolean invalidFee = deliveryFee == null || deliveryFee.isEmpty();
+
+        if (invalidAddress || invalidFee) {
+            setRejected(payment);
+        } else {
+            setSuccess(payment);
+        }
+    }
+
+    private void setSuccess(Payment payment) {
+        payment.setStatus(PaymentStatus.SUCCESS.getValue());
+        payment.getOrder().setStatus(PaymentStatus.SUCCESS.getValue());
+    }
+
+    private void setRejected(Payment payment) {
+        payment.setStatus(PaymentStatus.REJECTED.getValue());
+        payment.getOrder().setStatus(PaymentStatus.FAILED.getValue());
     }
 
     @Override
@@ -98,12 +106,12 @@ public class PaymentServiceImpl implements PaymentService {
 
         payment.setStatus(status);
 
-        if (SUCCESS.equals(status)) {
-            payment.getOrder().setStatus(SUCCESS);
+        if (PaymentStatus.SUCCESS.getValue().equals(status)) {
+            payment.getOrder().setStatus(PaymentStatus.SUCCESS.getValue());
         }
 
-        if (REJECTED.equals(status)) {
-            payment.getOrder().setStatus(FAILED);
+        if (PaymentStatus.REJECTED.getValue().equals(status)) {
+            payment.getOrder().setStatus(PaymentStatus.FAILED.getValue());
         }
 
         return payment;
@@ -111,7 +119,8 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment getPayment(String paymentId) {
-        return paymentRepository.findById(paymentId);
+        return paymentRepository.findById(paymentId)
+                .orElse(null);
     }
 
     @Override
