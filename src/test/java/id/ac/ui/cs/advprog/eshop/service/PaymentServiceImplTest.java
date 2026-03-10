@@ -1,7 +1,6 @@
 package id.ac.ui.cs.advprog.eshop.service;
 
 import id.ac.ui.cs.advprog.eshop.model.Order;
-import id.ac.ui.cs.advprog.eshop.model.Payment;
 import id.ac.ui.cs.advprog.eshop.model.Product;
 import id.ac.ui.cs.advprog.eshop.repository.PaymentRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,10 +14,11 @@ class PaymentServiceImplTest {
 
     PaymentServiceImpl service;
 
+    private static final String AUTHOR = "Safira Sudrajat";
+
     @BeforeEach
     void setup(){
-        service = new PaymentServiceImpl();
-        service.paymentRepository = new PaymentRepository();
+        service = new PaymentServiceImpl(new PaymentRepository());
     }
 
     private Order createOrder(){
@@ -36,60 +36,60 @@ class PaymentServiceImplTest {
                 "1",
                 products,
                 1700000000L,
-                "Safira Sudrajat"
+                AUTHOR
         );
     }
 
     @Test
-    void testAddPaymentVoucherSuccess(){
+    void testVoucherSuccess(){
 
         Order order = createOrder();
 
         Map<String,String> data = new HashMap<>();
         data.put("voucherCode","ESHOP1234ABC5678");
 
-        Payment payment = service.addPayment(order,"VOUCHER",data);
+        var payment = service.addPayment(order,"VOUCHER",data);
 
         assertEquals("SUCCESS", payment.getStatus());
     }
 
     @Test
-    void testAddPaymentVoucherRejected(){
+    void testVoucherRejected(){
 
         Order order = createOrder();
 
         Map<String,String> data = new HashMap<>();
         data.put("voucherCode","INVALID");
 
-        Payment payment = service.addPayment(order,"VOUCHER",data);
+        var payment = service.addPayment(order,"VOUCHER",data);
 
         assertEquals("REJECTED", payment.getStatus());
     }
 
     @Test
-    void testCashOnDeliverySuccess(){
+    void testCODSuccess(){
 
         Order order = createOrder();
 
         Map<String,String> data = new HashMap<>();
         data.put("address","Depok");
-        data.put("deliveryFee","15000");
+        data.put("deliveryFee","10000");
 
-        Payment payment = service.addPayment(order,"COD",data);
+        var payment = service.addPayment(order,"COD",data);
 
         assertEquals("SUCCESS", payment.getStatus());
     }
 
     @Test
-    void testCashOnDeliveryRejected(){
+    void testCODRejected(){
 
         Order order = createOrder();
 
         Map<String,String> data = new HashMap<>();
         data.put("address","");
-        data.put("deliveryFee","15000");
+        data.put("deliveryFee","10000");
 
-        Payment payment = service.addPayment(order,"COD",data);
+        var payment = service.addPayment(order,"COD",data);
 
         assertEquals("REJECTED", payment.getStatus());
     }
