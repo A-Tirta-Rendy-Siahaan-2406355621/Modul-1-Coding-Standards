@@ -1,6 +1,18 @@
-<h2>Orders</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order List</title>
+</head>
+
+<body>
+
+<h1>Orders</h1>
+
 <ul>
-    <li th:each="o : ${orders}">
-        <span th:text="${o.id}"></span>
+    <li th:each="order : ${orders}">
+        <span th:text="${order.id}"></span>
     </li>
 </ul>
+
+</body>
+</html>

@@ -1,1 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Pay Order</title>
+</head>
+
+<body>
+
 <h1>Pay Order</h1>
+
+<p>Order ID: <span th:text="${orderId}"></span></p>
+
+<form th:action="@{'/order/pay/' + ${orderId}}" method="post">
+
+    <label>Voucher Code</label>
+    <input type="text" name="voucherCode">
+
+    <button type="submit">Pay</button>
+
+</form>
+
+</body>
+</html>
