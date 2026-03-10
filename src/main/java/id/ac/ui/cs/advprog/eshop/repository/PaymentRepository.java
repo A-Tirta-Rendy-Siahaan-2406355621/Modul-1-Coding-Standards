@@ -16,9 +16,9 @@ public class PaymentRepository {
         return payment;
     }
 
-    public Payment findById(String id){
-        for(Payment payment: paymentData){
-            if(payment.getId().equals(id)){
+    public Payment findById(String paymentId){
+        for(Payment payment : paymentData){
+            if(payment.getId().equals(paymentId)){
                 return payment;
             }
         }

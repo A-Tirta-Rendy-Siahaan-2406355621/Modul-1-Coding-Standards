@@ -10,12 +10,12 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
-public class PaymentServiceImpl implements PaymentService{
+public class PaymentServiceImpl implements PaymentService {
 
     public PaymentRepository paymentRepository = new PaymentRepository();
 
     @Override
-    public Payment addPayment(Order order, String method, Map<String,String> paymentData){
+    public Payment addPayment(Order order, String method, Map<String, String> paymentData) {
 
         Payment payment = new Payment();
         payment.setId(UUID.randomUUID().toString());
@@ -33,15 +33,20 @@ public class PaymentServiceImpl implements PaymentService{
     private void validatePayment(Payment payment){
 
         if(payment.getMethod().equals("VOUCHER")){
+
             String code = payment.getPaymentData().get("voucherCode");
 
-            if(code != null && code.length()==16 && code.startsWith("ESHOP")){
-                int digit = 0;
-                for(char c: code.toCharArray()){
-                    if(Character.isDigit(c)) digit++;
+            if(code != null && code.length() == 16 && code.startsWith("ESHOP")){
+
+                int digitCount = 0;
+
+                for(char c : code.toCharArray()){
+                    if(Character.isDigit(c)){
+                        digitCount++;
+                    }
                 }
 
-                if(digit==8){
+                if(digitCount == 8){
                     payment.setStatus("SUCCESS");
                     payment.getOrder().setStatus("SUCCESS");
                     return;
@@ -53,13 +58,20 @@ public class PaymentServiceImpl implements PaymentService{
         }
 
         if(payment.getMethod().equals("COD")){
-            String address = payment.getPaymentData().get("address");
-            String fee = payment.getPaymentData().get("deliveryFee");
 
-            if(address==null || address.isEmpty() || fee==null || fee.isEmpty()){
+            String address = payment.getPaymentData().get("address");
+            String deliveryFee = payment.getPaymentData().get("deliveryFee");
+
+            if(address == null || address.isEmpty() ||
+                    deliveryFee == null || deliveryFee.isEmpty()){
+
                 payment.setStatus("REJECTED");
+                payment.getOrder().setStatus("FAILED");
+
             }else{
+
                 payment.setStatus("SUCCESS");
+                payment.getOrder().setStatus("SUCCESS");
             }
         }
     }
