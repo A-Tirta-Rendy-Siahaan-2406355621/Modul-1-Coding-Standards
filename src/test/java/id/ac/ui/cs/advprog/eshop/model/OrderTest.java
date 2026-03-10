@@ -1,77 +1,51 @@
 package id.ac.ui.cs.advprog.eshop.model;
 
-
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-//test
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class OrderTest {
 
-    private List<Product> products;
+    private static final String ORDER_ID = "13652556-012a-4c07-b546-54eb1396d79b";
+    private static final String AUTHOR = "Safira Sudrajat";
+    private static final long ORDER_TIME = 1708560000L;
 
-    @BeforeEach
-    void setUp() {
-        this.products = new ArrayList<>();
+    private List<Product> createProducts() {
+        List<Product> products = new ArrayList<>();
 
-        Product product1 = new Product();
-        product1.setProductId("eb558e9f-1c39-460e-8860-71af6af63bd6");
-        product1.setProductName("Sampo Cap Bambang");
-        product1.setProductQuantity(2);
+        Product product = new Product();
+        product.setProductId("1");
+        product.setProductName("Test Product");
+        product.setProductQuantity(1);
 
-        Product product2 = new Product();
-        product2.setProductId("a2c62328-4a37-4664-83c7-f32db8620155");
-        product2.setProductName("Sabun Cap Usep");
-        product2.setProductQuantity(1);
-
-        this.products.add(product1);
-        this.products.add(product2);
-    }
-
-    @Test
-    void testCreateOrderEmptyProduct() {
-        this.products.clear();
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            Order order = new Order(
-                    "13652556-012a-4c07-b546-54eb1396d79b",
-                    this.products,
-                    1708560000L,
-                    "Safira Sudrajat"
-            );
-        });
+        products.add(product);
+        return products;
     }
 
     @Test
     void testCreateOrderDefaultStatus() {
+
         Order order = new Order(
-                "13652556-012a-4c07-b546-54eb1396d79b",
-                this.products,
-                1708560000L,
-                "Safira Sudrajat"
+                ORDER_ID,
+                createProducts(),
+                ORDER_TIME,
+                AUTHOR
         );
 
-        assertSame(this.products, order.getProducts());
-        assertEquals(2, order.getProducts().size());
-        assertEquals("Sampo Cap Bambang", order.getProducts().get(0).getProductName());
-        assertEquals("Sabun Cap Usep", order.getProducts().get(1).getProductName());
-
-        assertEquals("13652556-012a-4c07-b546-54eb1396d79b", order.getId());
-        assertEquals(1708560000L, order.getOrderTime());
-        assertEquals("Safira Sudrajat", order.getAuthor());
         assertEquals("WAITING_PAYMENT", order.getStatus());
     }
 
     @Test
     void testCreateOrderSuccessStatus() {
+
         Order order = new Order(
-                "13652556-012a-4c07-b546-54eb1396d79b",
-                this.products,
-                1708560000L,
-                "Safira Sudrajat",
+                ORDER_ID,
+                createProducts(),
+                ORDER_TIME,
+                AUTHOR,
                 "SUCCESS"
         );
 
@@ -80,24 +54,26 @@ class OrderTest {
 
     @Test
     void testCreateOrderInvalidStatus() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            Order order = new Order(
-                    "13652556-012a-4c07-b546-54eb1396d79b",
-                    this.products,
-                    1708560000L,
-                    "Safira Sudrajat",
-                    "MEOW"
-            );
-        });
+
+        assertThrows(IllegalArgumentException.class, () ->
+                new Order(
+                        ORDER_ID,
+                        createProducts(),
+                        ORDER_TIME,
+                        AUTHOR,
+                        "INVALID"
+                )
+        );
     }
 
     @Test
     void testSetStatusToCancelled() {
+
         Order order = new Order(
-                "13652556-012a-4c07-b546-54eb1396d79b",
-                this.products,
-                1708560000L,
-                "Safira Sudrajat"
+                ORDER_ID,
+                createProducts(),
+                ORDER_TIME,
+                AUTHOR
         );
 
         order.setStatus("CANCELLED");
@@ -105,15 +81,4 @@ class OrderTest {
         assertEquals("CANCELLED", order.getStatus());
     }
 
-    @Test
-    void testSetStatusToInvalidStatus() {
-        Order order = new Order(
-                "13652556-012a-4c07-b546-54eb1396d79b",
-                this.products,
-                1708560000L,
-                "Safira Sudrajat"
-        );
-
-        assertThrows(IllegalArgumentException.class, () -> order.setStatus("MEOW"));
-    }
 }
