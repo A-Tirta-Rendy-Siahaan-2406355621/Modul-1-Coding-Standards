@@ -1,0 +1,6 @@
+<h2>Orders</h2>
+<ul>
+    <li th:each="o : ${orders}">
+        <span th:text="${o.id}"></span>
+    </li>
+</ul>
